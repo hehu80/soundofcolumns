@@ -127,7 +127,6 @@ def get_sound_id(sound, language):
         else:
             time.sleep(1)
 
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='A simple script to download sound files from www.soundoftext.com.', epilog='')
@@ -139,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('--soundcolumn', '-s', help='column for sound file name in target CSV file', default=(0), type=int, dest='sound_column')
     parser.add_argument('--directory', '-d', help='target directory for sound files', default=('.'), dest='directory')
     parser.add_argument('--language', '-l', help='language code (https://soundoftext.com/docs#voices)', default=('cmn-Hant-TW'), dest='language')
+    parser.add_argument('--soundformat', '-sf', help='format for sound column, e.g. \"A{0}B\" while {0} is the name of the sound file', default=(u'[sound:{0}]'), dest='sound_format')
 
     args = parser.parse_args()
     
@@ -164,10 +164,10 @@ if __name__ == '__main__':
                 print "download sound " + sound
                 try:
                     sound_file = download_sound(get_sound_id(sound, args.language), sound, args.directory)
-		    if (args.sound_column > 0):
+                    if (args.sound_column > 0):
                         while len(row) < args.sound_column:
                             row.append('')
-                        row[args.sound_column - 1] = sound_file
+                    row[args.sound_column - 1] = args.sound_format.format(sound_file)
                 except:
                     print "download failed"
         writer.writerow(row)
