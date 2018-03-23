@@ -101,26 +101,26 @@ def download_sound(url, sound, target):
     sound = sound.replace(" ", "")
     sound = sound.replace("__", "_")
     sound = sound + '.mp3'
-    
+
     file = urllib2.urlopen(url)
     with open(target + '/' + sound,'wb') as output:
         output.write(file.read())
-        
+
     return sound
 
 
 def get_sound_id(sound, language):
     headers = {'Content-type': 'application/json'}
-    
+
     sound = sound.replace("/", " ")
     sound = sound.replace("  ", " ")
 
-    url = "https://soundoftext.com/api/sounds"
+    url = "https://api.soundoftext.com/sounds"
     payload = {'engine': 'Google', 'data': {'text': sound, 'voice': language}}
     request = requests.post(url, json=payload, headers=headers)   
-    
+
     while True:
-        url = "https://soundoftext.com/api/sounds/" + request.json()['id'] 
+        url = "https://api.soundoftext.com/sounds/" + request.json()['id'] 
         request = requests.get(url, headers=headers)
         if request.json()['status'] == 'Done':  
             return request.json()['location']
@@ -163,8 +163,8 @@ if __name__ == '__main__':
             if (sound != '') and (args.sound_column <= 0 or len(row) < args.sound_column or row[args.sound_column - 1] == ''):
                 print "download sound " + sound
                 try:
-                    sound_file = download_sound(get_sound_id(sounda, args.language), sound, args.directory)
-                    if (args.sound_column > 0):
+                    sound_file = download_sound(get_sound_id(sound, args.language), sound, args.directory)
+		    if (args.sound_column > 0):
                         while len(row) < args.sound_column:
                             row.append('')
                         row[args.sound_column - 1] = sound_file
